@@ -1,0 +1,37 @@
+---
+- name: Install and configure Fail2ban for SSH
+  hosts: my_server
+  become: yes
+
+  tasks:
+    - name: Install Fail2ban
+      apt:
+        name: fail2ban
+        state: present
+        update_cache: yes
+
+    - name: Ensure fail2ban is started and enabled
+      systemd:
+        name: fail2ban
+        state: started
+        enabled: yes
+
+    - name: Create SSH jail config file
+      copy:
+        dest: /etc/fail2ban/jail.d/sshd.conf
+        content: |
+          [sshd]
+          enabled = true
+          port = ssh
+          logpath = /var/log/auth.log
+          backend = systemd
+          maxretry = 2
+          findtime = 10m
+          bantime = 5m
+          ignoreip = 43.205.136.75
+
+    - name: Restart Fail2ban to apply changes
+      systemd:
+        name: fail2ban
+        state: restarted
+
