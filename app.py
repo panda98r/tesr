@@ -15,7 +15,7 @@ db_config = {
 def index():
     try:
         connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
+       // cursor = connection.cursor()
         cursor.execute("SELECT DATABASE();")
         database = cursor.fetchone()[0]
         return jsonify({"database": database})
